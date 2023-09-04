@@ -5,14 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 public class App {
-    public static void main(String[] args) {
-        String sentence = "the java is the best programming language java";
-        Map wordsCount = App.getWordCount(sentence);
-        System.out.println(wordsCount);
-        String result = App.toString(wordsCount);
-        System.out.println(result);
-    }
-
     // BEGIN
     public static Map getWordCount(String sentence) {
         String[] res = sentence.split(" ");
