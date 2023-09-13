@@ -8,24 +8,16 @@ import java.util.stream.Stream;
 class App {
     public static String getForwardedVariables (String conf) {
 
-        String confStream = Arrays.stream(conf.split("\n"))
-                .filter(x -> x.contains("environment"))
-                .flatMap(x-> Stream.of(x.split("X_FORWARDED")))
-                .flatMap(x-> Stream.of(x.split(",")))
-                .filter(x -> x.contains("_"))
-                .flatMap(x->Stream.of(x.replace('_', ',')))
-               // .filter(x->!x.contains("\""))
-                .collect(Collectors.joining());
-//                .flatMap(x-> Stream.of(x.split(",")))
-//                .filter(x->x.contains("\"X_FORWARDED_"))
-//                .flatMap(x-> Stream.of(x.split("\"X_FORWARDED_")))
-//                .filter(x->!x.isEmpty())
-        String str="";
-        for (int i = 1; i < confStream.length(); i++) {
-            if (confStream.charAt(i) == '\"') continue;
-            else str = str + confStream.charAt(i);
-        }
-        return str;
+        String[] lines = conf.split("\n");
+        return Arrays.stream(lines)
+                .filter(line -> line.startsWith("environment="))
+                .map(line -> line.replaceAll("environment=", ""))
+                .map(line -> line.replaceAll("\"", ""))
+                .map(line -> line.split(","))
+                .flatMap(Arrays::stream)
+                .filter(kv -> kv.startsWith("X_FORWARDED_"))
+                .map(kv -> kv.replaceFirst("X_FORWARDED_", ""))
+                .collect(Collectors.joining(","));
     }
 }
 //END
