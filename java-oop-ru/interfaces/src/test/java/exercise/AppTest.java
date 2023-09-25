@@ -57,6 +57,13 @@ class AppTest {
     }
 
     // BEGIN
-    
+    @Test
+    void testReversedSequence() {
+        CharSequence a = new ReversedSequence("hui");
+        assertThat(a.length()).isEqualTo(3);
+        assertThat(a.toString()).isEqualTo("iuh");
+        assertThat(a.charAt(1)).isEqualTo('u');
+        assertThat(a.subSequence(0,1)).isEqualTo("i");
+    }
     // END
 }
