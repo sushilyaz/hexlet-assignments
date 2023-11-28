@@ -25,7 +25,7 @@ public final class App {
             var companyRes = COMPANIES.stream()
                     .filter(company -> company.get("id").equals(id))
                     .findFirst()
-                    .orElseThrow(NotFoundResponse::new);
+                    .orElseThrow(() -> new NotFoundResponse("Company not found"));
             ctx.json(companyRes);
         });
 
