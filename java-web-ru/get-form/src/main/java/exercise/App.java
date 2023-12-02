@@ -4,12 +4,13 @@ import io.javalin.Javalin;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import exercise.model.User;
 import exercise.dto.users.UsersPage;
+
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 
 public final class App {
 
@@ -26,7 +27,7 @@ public final class App {
         app.get("/users", ctx -> {
             var term = ctx.queryParam("term");
             List<User> users = new ArrayList<>(USERS);
-            if (term!=null) {
+            if (term != null) {
                 users = users.stream()
                         .filter(user -> user.getFirstName().toLowerCase().equals(term.toLowerCase()))
                         .collect(Collectors.toList());
