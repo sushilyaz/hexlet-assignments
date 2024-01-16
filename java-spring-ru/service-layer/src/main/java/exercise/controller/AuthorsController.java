@@ -30,49 +30,32 @@ public class AuthorsController {
     @Autowired
     private AuthorService authorService;
     //begin
-    @Autowired
-    private AuthorRepository authorRepository;
-
-    @Autowired
-    private AuthorMapper authorMapper;
-
     @GetMapping(path = "")
-    @ResponseStatus(HttpStatus.OK)
     public List<AuthorDTO> index() {
-        return authorService.getAll();
+        return authorService.getAllAuthors();
     }
 
     @GetMapping(path = "/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public AuthorDTO show(@PathVariable Long id) {
-        var author = authorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Author with id " + id + " not found"));
-        return authorMapper.map(author);
+    public AuthorDTO show(@PathVariable long id) {
+        return authorService.getAuthorById(id);
     }
 
     @PostMapping(path = "")
     @ResponseStatus(HttpStatus.CREATED)
-    public AuthorDTO create(@RequestBody @Valid AuthorCreateDTO authorCreateDTO) {
-        var author = authorMapper.map(authorCreateDTO);
-        authorRepository.save(author);
-        return authorMapper.map(author);
+    public AuthorDTO create(@Valid @RequestBody AuthorCreateDTO authorData) {
+        return authorService.createAuthor(authorData);
     }
 
-    @PutMapping(path = "/{id}")
+    @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public AuthorDTO update (@RequestBody AuthorUpdateDTO authorUpdateDTO, @PathVariable Long id) {
-        var author = authorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Author with id " + id + " not found"));
-        authorMapper.update(authorUpdateDTO, author);
-        authorRepository.save(author);
-        return authorMapper.map(author);
+    AuthorDTO update(@RequestBody @Valid AuthorUpdateDTO authorData, @PathVariable Long id) {
+        return authorService.updateAuthor(authorData, id);
     }
 
-    @DeleteMapping(path = "/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void destroy (@PathVariable Long id) {
-        authorRepository.deleteById(id);
-    }
-    //end
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void destroy(@PathVariable Long id) {
+        authorService.deleteAuthor(id);
+    } //end
 
 }

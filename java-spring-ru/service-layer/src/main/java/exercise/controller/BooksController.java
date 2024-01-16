@@ -27,55 +27,33 @@ public class BooksController {
     private BookService bookService;
 
     // BEGIN
-    @Autowired
-    private BookRepository bookRepository;
-
-    @Autowired
-    private AuthorRepository authorRepository;
-
-    @Autowired
-    private BookMapper bookMapper;
-
-    @GetMapping(path = "")
-    @ResponseStatus(HttpStatus.OK)
-    public List<BookDTO> index() {
-        return bookService.getAll();
+    @GetMapping("")
+    List<BookDTO> index() {
+        return bookService.getAllBooks();
     }
 
-    @GetMapping(path = "/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public BookDTO show(@PathVariable Long id) {
-        var book = bookRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Book with id " + id + " not found"));
-        return bookMapper.map(book);
-    }
-
-    @PostMapping(path = "")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public BookDTO create(@RequestBody @Valid BookCreateDTO bookCreateDTO) {
-        var author = authorRepository.findById(bookCreateDTO.getAuthorId())
-                        .orElseThrow(() -> new ConstraintViolationException("Not found", Set.of()));
-        var book = bookMapper.map(bookCreateDTO);
-        book.setAuthor(author);
-        bookRepository.save(book);
-        return bookMapper.map(book);
+    BookDTO create(@Valid @RequestBody BookCreateDTO bookData) {
+        return bookService.createBook(bookData);
     }
 
-    @PutMapping(path = "/{id}")
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public BookDTO update (@RequestBody BookUpdateDTO bookUpdateDTO, @PathVariable Long id) {
-        var book = bookRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Book with id " + id + " not found"));
-        bookMapper.update(bookUpdateDTO, book);
-        bookRepository.save(book);
-        return bookMapper.map(book);
+    BookDTO show(@PathVariable Long id) {
+        return bookService.getBookById(id);
     }
 
-    @DeleteMapping(path = "/{id}")
+    @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void destroy (@PathVariable Long id) {
-        bookRepository.deleteById(id);
+    BookDTO update(@RequestBody @Valid BookUpdateDTO bookData, @PathVariable Long id) {
+        return bookService.updateBook(bookData, id);
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void destroy(@PathVariable Long id) {
+        bookService.deleteBook(id);
+    }
     // END
 }
